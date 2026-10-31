@@ -1,0 +1,43 @@
+name: leya
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: leya
+      # Generated into the git-ignored .env by `make env` (run by `make up`).
+      POSTGRES_PASSWORD: ${LEYA_DB_PASSWORD:?}
+      POSTGRES_DB: leya
+    ports: ["5432:5432"]
+    volumes:
+      - leya-db:/var/lib/postgresql/data
+      - ./infra/docker/init-db.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U leya -d leya"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: { context: ., dockerfile: apps/api/Dockerfile }
+    environment:
+      # Interpolated from the root .env (git-ignored); empty if unset.
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      VOYAGE_API_KEY: ${VOYAGE_API_KEY:-}
+      LANGSMITH_TRACING: ${LANGSMITH_TRACING:-false}
+      LANGSMITH_API_KEY: ${LANGSMITH_API_KEY:-}
+      LEYA_ENVIRONMENT: local
+      LEYA_DATABASE_URL: postgresql+psycopg://leya:${LEYA_DB_PASSWORD}@db:5432/leya
+    ports: ["8000:8000"]
+    depends_on:
+      db: { condition: service_healthy }
+
+  web:
+    build:
+      context: apps/web
+      args: { NEXT_PUBLIC_LEYA_API_URL: "http://localhost:8000" }
+    ports: ["3000:3000"]
+    depends_on: [api]
+
+volumes:
+  leya-db:

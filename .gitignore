@@ -1,0 +1,26 @@
+# Secrets — never commit. Copy .env.example to .env.
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+
+# Node (apps/web has its own .gitignore too)
+node_modules/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Claude Code personal settings
+.claude/settings.local.json
