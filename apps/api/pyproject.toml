@@ -1,0 +1,23 @@
+[project]
+name = "leya-api"
+version = "0.1.0"
+description = "Leya Enterprises e-commerce API (catalog, cart, orders, accounts, inventory, assistant)"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.32",
+  "pydantic-settings>=2.6",
+  "sqlalchemy>=2.0",
+  "psycopg[binary]>=3.2",
+  "leya-rag",
+]
+
+[tool.uv.sources]
+leya-rag = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/leya_api"]

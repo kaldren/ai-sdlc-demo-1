@@ -1,0 +1,13 @@
+[project]
+name = "leya-rag"
+version = "0.1.0"
+description = "Shared RAG building blocks for Leya: loaders, splitters, embeddings, pgvector store, ingest CLI"
+requires-python = ">=3.13,<3.14"
+dependencies = []  # LangChain deps arrive with the pilot change (intent → spec → plan)
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/leya_rag"]
